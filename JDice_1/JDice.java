@@ -106,7 +106,7 @@ public class JDice {
             if (name != null) {
                 listItems.add(0, name);
                 start = 1;
-                prepend = "  ";
+                prepend = " ";
             }
             int[] selectionIndices = new int[start + v.size()];
             for (i = 0; i < v.size(); i++) {
