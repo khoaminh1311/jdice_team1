@@ -66,10 +66,12 @@ public class JDice {
                     || e.getActionCommand().equals(ROLL)) {
                 //add method to check if getSelectedItem() return null
                 Object selectedItem = inputBox.getSelectedItem();
-                if (selectedItem == null || selectedItem.toString().trim().isEmpty()) {
-                    showError("Please enter or select a dice expression first.");
+                String input = selectedItem != null ? selectedItem.toString().trim() : "";
+                if (input.isEmpty()) {
+                    showError("Vui lòng chọn biểu thức xúc xắc.");
                     return;
                 }
+
                 String s = inputBox.getSelectedItem().toString();
                 String[] arr = s.split("=");
                 String name = "";
