@@ -32,44 +32,50 @@ public class JDice {
 
     static final String CLEAR = "Clear";
     static final String ROLL = "Roll Selection";
-    private static final Logger logger = Logger.getLogger(JDice.class.getName()); //declare variable logger
+    private static final Logger logger = Logger.getLogger(JDice.class.getName()); // declare variable logger
 
-    static void showError(String s) { //adding code to showError() method
+    static void showError(String s) { // adding code to showError() method
         JOptionPane.showMessageDialog(null, s, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    private static class JDiceListener implements ActionListener { //change constructor from public to private
+    private static class JDiceListener implements ActionListener { // change constructor from public to private
 
         Vector<String> listItems;
-        JList<String> resultList; //declare parameterized types instead of raw types to bypass generic type checking    
-        JComboBox<String> inputBox; //declare parameterized types instead of raw types to bypass generic type checking
+        JList<String> resultList; // declare parameterized types instead of raw types to bypass generic type
+                                  // checking
+        JComboBox<String> inputBox; // declare parameterized types instead of raw types to bypass generic type
+                                    // checking
         long lastEvent;
 
-        /* hack to prevent double events with text
-			   entry */
+        /*
+         * hack to prevent double events with text
+         * entry
+         */
         public JDiceListener(JList<String> resultList,
-                JComboBox<String> inputBox) { //correct the name of the constructor and change private to public
+                JComboBox<String> inputBox) { // correct the name of the constructor and change private to public
 
-            this.listItems = new Vector<>(); //use the diamond operator to reduce the verbosity of generic code
+            this.listItems = new Vector<>(); // use the diamond operator to reduce the verbosity of generic code
             this.resultList = resultList;
-            this.inputBox = inputBox; //correct the code by adding "."
-            this.lastEvent = 0; //adding keyword "this"
+            this.inputBox = inputBox; // correct the code by adding "."
+            this.lastEvent = 0; // adding keyword "this"
         }
 
         public void actionPerformed(ActionEvent e) {
 
-            if (e.getWhen() == lastEvent) { //fix style violation
+            if (e.getWhen() == lastEvent) { // fix style violation
                 return;
             }
             lastEvent = e.getWhen();
             if (e.getSource() instanceof JComboBox
                     || e.getActionCommand().equals(ROLL)) {
-                //add method to check if getSelectedItem() return null
+                // add method to check if getSelectedItem() return null
                 Object selectedItem = inputBox.getSelectedItem();
                 if (selectedItem == null || selectedItem.toString().trim().isEmpty()) {
                     showError("Oops! Please enter or choose a dice expression.");
+
                     return;
                 }
+
                 String s = inputBox.getSelectedItem().toString();
                 String[] arr = s.split("=");
                 String name = "";
@@ -124,16 +130,16 @@ public class JDice {
         }
 
         public static void main(String[] args) {
-            Vector<String> v = new Vector<>(); //use the diamond operator to reduce the verbosity of generic code
-            if (args.length >= 1) { //remove unnecessary comment
-                //use try-with-resources so each resource is closed at the end of the statement
+            Vector<String> v = new Vector<>(); // use the diamond operator to reduce the verbosity of generic code
+            if (args.length >= 1) { // remove unnecessary comment
+                // use try-with-resources so each resource is closed at the end of the statement
                 try (BufferedReader br = new BufferedReader(new FileReader(args[0]))) {
                     String s;
                     while ((s = br.readLine()) != null) {
                         v.add(s);
                     }
                 } catch (IOException ioe) {
-                    //remove printStackTrace() 
+                    // remove printStackTrace()
                     if (logger.isLoggable(java.util.logging.Level.INFO)) {
                         logger.log(Level.SEVERE, "\nCould not read input file: {0}", args[0]);
                         logger.log(Level.INFO, "***********\n**********\n");
@@ -145,7 +151,7 @@ public class JDice {
         }
 
         private static void createAndShowGUI(Vector<String> v) {
-            //adding the code from line 123 to 153 into createAndShowGUI() method
+            // adding the code from line 123 to 153 into createAndShowGUI() method
             JFrame jf = new JFrame("Dice Roller");
             Container c = jf.getContentPane();
             c.setLayout(new BorderLayout());
@@ -159,15 +165,15 @@ public class JDice {
             JPanel rightSide = new JPanel();
             rightSide.setLayout(new BoxLayout(rightSide,
                     BoxLayout.Y_AXIS));
-            String[] buttons = {ROLL,
-                "d4",
-                "d6",
-                "d8",
-                "d10",
-                "d12",
-                "d20",
-                "d100",
-                CLEAR};
+            String[] buttons = { ROLL,
+                    "d4",
+                    "d6",
+                    "d8",
+                    "d10",
+                    "d12",
+                    "d20",
+                    "d100",
+                    CLEAR };
             for (int i = 0; i < buttons.length; i++) {
                 JButton newButton = new JButton(buttons[i]);
                 rightSide.add(newButton);
@@ -175,7 +181,9 @@ public class JDice {
             }
             c.add(rightSide, BorderLayout.EAST);
             jf.setSize(450, 500);
-            jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //change JFrame to WindowConstant because "static" base class members should not be accessed via derived types 
+            jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // change JFrame to WindowConstant because
+                                                                        // "static" base class members should not be
+                                                                        // accessed via derived types
             jf.setVisible(true);
         }
 

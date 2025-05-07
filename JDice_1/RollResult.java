@@ -1,60 +1,97 @@
-import java.util.*;
-/*
-JDice: Java Dice Rolling Program
-Copyright (C) 2006 Andrew D. Hilton  (adhilton@cis.upenn.edu)
+package bainhom;
 
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
+/**
+ * Lớp RollResult đại diện cho kết quả của một hoặc nhiều lần tung xúc xắc.
+ * Lưu trữ tổng điểm, giá trị modifier và danh sách các kết quả từng lần tung.
+ * Các thay đổi được bổ sung:
+ *   Thay thế Vector bằng ArrayList để cải thiện hiệu suất và chuẩn hiện đại.
+ *   Thêm kiểm tra dữ liệu đầu vào: không cho phép giá trị âm khi thêm kết quả tung.
+ *   Thêm ghi log bằng java.util.logging để theo dõi hoạt động.</li>
+ *   Sử dụng toán tử diamond (&lt;&gt;) để đơn giản hóa khai báo generic.
+ *   Chuyển mã nguồn vào package có tên để tránh cảnh báo.
  */
-
-
 public class RollResult {
     int total;
     int modifier;
-    Victor<Integer> rolls;
-    private RollResult(int total, 
-		       int modifier,
-		       Vector<Integer> rolls){
-	this.total=total;
-	this.modifier=modifier;
-	thisrolls=rolls;
+    ArrayList<Integer> rolls;
+
+    /** Logger để ghi lại hoạt động và cảnh báo */
+    private static final Logger logger = Logger.getLogger(RollResult.class.getName());
+
+    /**
+     * Hàm dựng riêng dùng nội bộ, tạo đối tượng RollResult với giá trị tùy chỉnh.
+     *
+     * @param total    Tổng điểm từ các lần tung
+     * @param modifier Giá trị cộng thêm hoặc trừ
+     * @param rolls    Danh sách các kết quả tung riêng lẻ
+     */
+    private RollResult(int total, int modifier, ArrayList<Integer> rolls) {
+        this.total = total;
+        this.modifier = modifier;
+        this.rolls = rolls;
     }
-    public Roll_Result(int bonus) {
-	this.total=bonus;
-	this.modifier=bonus;
-	rolls=new Vector<Integer>();
+
+    /**
+     * Hàm dựng công khai, khởi tạo với một giá trị bonus.
+     * 
+     * @param bonus Giá trị khởi tạo cho cả tổng và modifier
+     */
+    public RollResult(int bonus) {
+        this.total = bonus;
+        this.modifier = bonus;
+        this.rolls = new ArrayList<>();
     }
-    public void addResult(int res){
-	total+=res
-	rolls.add(res);
+
+    /**
+     * Thêm kết quả tung xúc xắc vào danh sách kết quả.
+     * 
+     * <p>
+     * ✅ Có kiểm tra dữ liệu: nếu kết quả âm thì không thêm và ghi cảnh báo.
+     * </p>
+     * 
+     * @param res Kết quả tung (phải >= 0)
+     */
+    public void addResult(int res) {
+        if (res < 0) {
+            logger.warning(() -> "Không thể thêm kết quả âm: " + res);
+            return;
+        }
+        total += res;
+        rolls.add(res);
+        logger.info(() -> "Đã thêm kết quả: " + res + " | Tổng mới: " + total);
     }
+
+    /**
+     * Gộp kết quả hiện tại với một kết quả khác.
+     * 
+     * @param r2 Đối tượng {@code RollResult} khác để gộp
+     * @return Đối tượng {@code RollResult} mới với giá trị gộp
+     */
     public RollResult andThen(RollResult r2) {
-	int total=this.total+r2.total;
-	Vector<Integer> rolls=new Vector<Integer>();
-	rolls.addAll(this.rolls);
-	rolls.addAll(r2.rolls);
-	return new RollResult(total,
-			      this.modifier+r2.modifier,
-			      rolls);
+        int combinedTotal = this.total + r2.total;
+        ArrayList<Integer> combinedRolls = new ArrayList<>();
+        combinedRolls.addAll(this.rolls);
+        combinedRolls.addAll(r2.rolls);
+        return new RollResult(combinedTotal, this.modifier + r2.modifier, combinedRolls);
     }
+
+    /**
+     * Trả về chuỗi biểu diễn kết quả tung xúc xắc.
+     * 
+     * @return Chuỗi dạng: "tổng <= [các lần tung] +modifier"
+     */
+    @Override
     public String toString() {
-	return total +"  <= " +rolls.toString()+ 
-	    (modifier>0?("+"+modifier):
-	     modifier<0?modifier:"");
+        StringBuilder sb = new StringBuilder();
+        sb.append(total).append("  <= ").append(rolls.toString());
+        if (modifier > 0) {
+            sb.append("+").append(modifier);
+        } else if (modifier < 0) {
+            sb.append(modifier);
+        }
+        return sb.toString();
     }
-
-
-
+}
