@@ -1,7 +1,11 @@
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class DiceParser {
 	/* this is a helper class to manage the input "stream" */
+	private static final Logger logger = Logger.getLogger(DiceParser.class.getName());
+
 	private static class StringStream {
 		StringBuffer buff;
 
@@ -140,7 +144,8 @@ public class DiceParser {
 
 	private static Vector<DieRoll> parseXDice(StringStream ss) {
 		StringStream saved = ss.save();
-		Integer x = ssgetInt();
+		// Integer x = ssgetInt();
+		Integer x = ss.readInt(); //goi trực tiếp hàm readInt() thay vì getInt() vì hàm getInt cũng chỉ gọi ra ham readInt()
 		int num;
 		if (x == null) {
 			num = 1;
@@ -148,8 +153,7 @@ public class DiceParser {
 			if (ss.checkAndEat("x")) {
 				num = x;
 			} else {
-				num = 1; // thieu toan tu gan =
-				ss.restore(saved);
+				ss.restore(saved); //loai bo mum = 1: vì restore rồi lại gán num = 1 là không hợp lý
 			}
 		}
 		DieRoll dr = parseDice(ss);
@@ -214,7 +218,7 @@ public class DiceParser {
 			return null;
 		if (ss.checkAndEat("&")) {
 			DieRoll d2 = parseDice(ss);
-			return parseDTail(new DiceSum(r1,d2),ss);
+			return parseDTail(new DiceSum(r1,d2),ss); // mở lại comment vì thiếu return
 		} else {
 			return r1;
 		}
@@ -224,14 +228,12 @@ public class DiceParser {
 		Vector<DieRoll> v = parseRoll(s);
 		int i;
 		if (v == null)
-			System.out.println("Failure:" + s);
+			logger.warning(()-> "Failure: " +s );
 		else {
-			System.out.println("Results for " + s + ":");
+			logger.info(()-> "Results for : " +s+":");
 			for (i = 0; i < v.size(); i++) {
 				DieRoll dr = v.get(i);
-				System.out.print(v.get(i));
-				System.out.print(": ");
-				System.out.println(dr.makeRoll());
+				logger.info(() -> dr.toString() + ": " + dr.makeRoll());
 			}
 		}
 	}
