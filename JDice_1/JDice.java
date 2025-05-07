@@ -70,6 +70,7 @@ public class JDice {
                     showError("OMG!!! Please enter or select a dice expression first.");
                     return;
                 }
+
                 String s = inputBox.getSelectedItem().toString();
                 String[] arr = s.split("=");
                 String name = "";
