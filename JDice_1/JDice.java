@@ -67,7 +67,7 @@ public class JDice {
                 //add method to check if getSelectedItem() return null
                 Object selectedItem = inputBox.getSelectedItem();
                 if (selectedItem == null || selectedItem.toString().trim().isEmpty()) {
-                    showError("Please enter or select a dice expression first.");
+                    showError("Oops! Please enter or choose a dice expression.");
                     return;
                 }
                 String s = inputBox.getSelectedItem().toString();
