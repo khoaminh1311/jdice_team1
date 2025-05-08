@@ -1,0 +1,29 @@
+name: Java CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 2323
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+
+      - name: Compile Java code
+        run: |
+          mkdir -p out
+          find . -name "*.java" > sources.txt
+          javac -d out @sources.txt
+
+      - name: Run Main class
+        run: java -cp out JDice
